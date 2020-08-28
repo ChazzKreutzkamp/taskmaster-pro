@@ -82,7 +82,7 @@ $(".list-group").on("blur", "textarea", function () {
   $(this).replaceWith(taskP);
 });
 
-$(".list-group").on("click", "span", function() {
+$(".list-group").on("click", "span", function () {
   var date = $(this)
     .text()
     .trim();
@@ -100,7 +100,7 @@ $(".list-group").on("click", "span", function() {
   dateInput.trigger("focus");
 });
 
-$(".list-group").on("blur", "input[type='text']", function() {
+$(".list-group").on("blur", "input[type='text']", function () {
   var date = $(this)
     .val()
     .trim();
@@ -116,7 +116,7 @@ $(".list-group").on("blur", "input[type='text']", function() {
   var taskSpan = $("<span>")
     .addClass("badge badge-primary badge-pill")
     .text(date);
-  
+
   $(this).replaceWith(taskSpan);
 });
 
@@ -162,7 +162,46 @@ $("#remove-tasks").on("click", function () {
   }
   saveTasks();
 });
+$(".card .list-group").sortable({
+  connectWith: $(".card .list-group"),
+  scroll: false,
+  tolerance: "pointer",
+  helper: "clone",
+  update: function (event) {
+    var tempArr = [];
 
+    // loop over current set of children in sortable list
+    $(this).children().each(function () {
+      var text = $(this)
+        .find("p")
+        .text()
+        .trim();
+
+      var date = $(this)
+        .find("span")
+        .text()
+        .trim();
+
+      // add task data to the temp array as an object
+      tempArr.push({
+        text: text,
+        date: date
+      });
+    });
+    var arrName = $(this)
+    .attr("id")
+    .replace("list-", "")
+    tasks[arrName] = tempArr;
+    saveTasks();
+  }
+});
+$("#trash").droppable({
+  accept: ".card .list-group-item",
+  tolerance: "touch",
+  drop: function(event, ui) {
+    ui.draggable.remove();
+  }
+});
 // load tasks for the first time
 loadTasks();
 
